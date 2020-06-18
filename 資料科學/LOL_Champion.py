@@ -11,6 +11,7 @@ import re
 import csv
 
 data = []
+
 def craw():
     
     url = 'https://www.leagueofgraphs.com/champions/builds'
@@ -32,7 +33,7 @@ def craw():
             print(process,end='\n')
         data.append(temp)
     driver.close()
-    
+kda = []
 def process():
     global data
     for raw in range(len(data)):
@@ -45,7 +46,7 @@ def process():
                                  .replace('Mid','')
                                  .replace('Support',''))
 
-kda = []
+
 def split_kda(kda_list):
     global data
     for i in range(len(kda_list)):
@@ -54,11 +55,13 @@ def split_kda(kda_list):
         del data[i][5]
 
 
- if __name__ == '__main__':
-     craw()
-     process()
-     split_kda(data)
+def main(): 
+    craw()
+    process()
+    split_kda(data)
 
+if __name__ == '__main__':
+     main()
 # path='.\output.csv'
 # def save_data(data):
 #     headers = ['rank','Name','popular','win_rate','ban_rate','kda']
