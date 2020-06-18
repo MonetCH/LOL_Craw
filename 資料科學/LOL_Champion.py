@@ -10,13 +10,12 @@ import time
 import re
 import csv
 
-data = []
 
-def craw():
-    
+
+# Setting ChromeDriver and Crawling the data.It will take about 10 seconds.
+def crawl():
     url = 'https://www.leagueofgraphs.com/champions/builds'
     driverPath = '.\chromedriver.exe'
-    
     driver =webdriver.Chrome(driverPath)
     driver.get(url)
     time.sleep(2)
@@ -33,7 +32,9 @@ def craw():
             print(process,end='\n')
         data.append(temp)
     driver.close()
-kda = []
+
+
+# split the original data.
 def process():
     global data
     for raw in range(len(data)):
@@ -47,21 +48,15 @@ def process():
                                  .replace('Support',''))
 
 
+# split kda to another list.
 def split_kda(kda_list):
     global data
     for i in range(len(kda_list)):
         kda.append(kda_list[i][5].split('/'))
         data[i] = data[i]+kda[i]
         del data[i][5]
-
-
-def main(): 
-    craw()
-    process()
-    split_kda(data)
-
-if __name__ == '__main__':
-     main()
+        
+# Store in csv
 # path='.\output.csv'
 # def save_data(data):
 #     headers = ['rank','Name','popular','win_rate','ban_rate','kda']
@@ -76,21 +71,17 @@ if __name__ == '__main__':
 #         for row in data:
 #             writer.writerow(row)
                 
-                
-            
-                
-# reg_data = []
-# for data in x:
-#     reg = re.compile('<[^>]*>')
-#     process = reg.sub('',data).replace('\n','').replace(' ','')
-#     reg_data.append(process)
+        
+        
+def main(): 
+    
+    crawl()
+    process()
+    split_kda(data)
 
+if __name__ == '__main__':
+     data = []
+     kda = []
+     main()
+     
 
-
-
-# 
-# //*[@id="mainContent"]/div/div/div/table/tbody/tr[2]/td[2]/a/div/div[1]/img
-# //*[@id="mainContent"]/div/div/div/table/tbody/tr[2]/td[3]/progressbar
-# //*[@id="mainContent"]/div/div/div/table/tbody/tr[2]/td[4]/progressbar
-# //*[@id="mainContent"]/div/div/div/table/tbody/tr[2]/td[5]/progressbar
-# //*[@id="mainContent"]/div/div/div/table/tbody/tr[2]/td[6]
