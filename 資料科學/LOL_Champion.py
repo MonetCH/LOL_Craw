@@ -13,23 +13,28 @@ import csv
 
 
 # Setting ChromeDriver and Crawling the data.It will take about 10 seconds.
+url = 'https://www.leagueofgraphs.com/champions/builds'
+driverPath = '.\chromedriver.exe'
+driver =webdriver.Chrome(driverPath)
 def crawl():
-    url = 'https://www.leagueofgraphs.com/champions/builds'
-    driverPath = '.\chromedriver.exe'
-    driver =webdriver.Chrome(driverPath)
     driver.get(url)
     time.sleep(2)
+    temp = []
     for j in range(2,160):
+        img_temp = []
         if j >2:
             if j == 10 or j%16==2 :
                 continue
+        img = driver.find_element_by_xpath('//*[@id="mainContent"]/div/div/div/table/tbody/tr[{j}]/td[2]/a/div/div[1]/img'.format(j=j)).get_attribute('class')
+        img_temp.append(img)
+        img_data.append(img_temp)
+        print(img,end='\n')
         temp = []
         for i in range(1,7):
             tr_test = driver.find_element_by_xpath('//*[@id="mainContent"]/div/div/div/table/tbody/tr[{j}]/td[{i}]'.format(i=i,j=j)).get_attribute('innerHTML')
             reg = re.compile('<[^>]*>')
             process = reg.sub('',tr_test).replace('\n','').replace(' ','')
-            temp.append(process)
-            print(process,end='\n')
+            temp.append(process)     
         data.append(temp)
     driver.close()
 
@@ -56,6 +61,20 @@ def split_kda(kda_list):
         data[i] = data[i]+kda[i]
         del data[i][5]
         
+    
+# Craw img data and process
+def img_crawl(img):
+    global data
+    for i in range(len(img)):
+        for j in range(len(img[i])):
+            reg = re.compile(r'\-\d+\-')
+            match = reg.search(img[i][j])
+            img_reg = match.group(0).replace('-','')
+            img_url = 'http://lolg-cdn.porofessor.gg/img/champion-icons/10.11/36/{img_reg}.png'.format(img_reg=img_reg)
+            img[i][j] = img_url
+        data[i] = data[i]+img_data[i]
+        
+        
 # Store in csv
 # path='.\output.csv'
 # def save_data(data):
@@ -78,8 +97,9 @@ def main():
     crawl()
     process()
     split_kda(data)
-
+    img_crawl(img_data)
 if __name__ == '__main__':
+     img_data = []
      data = []
      kda = []
      main()
